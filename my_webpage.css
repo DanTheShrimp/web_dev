@@ -1,0 +1,44 @@
+body{
+    background-color: rgb(127, 195, 255);
+}
+h1{
+    font-family: "Playwrite CZ", cursive;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+    color:rgb(7, 99, 69);
+    justify-self: center;
+    margin:15px;
+    padding: 13px;
+}
+#h2{
+    padding: 10px;
+    margin: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color:rgba(13, 40, 93, 0.811);
+}
+#p{
+    padding: 3px;
+    margin: 3px;
+    font-family: "Share Tech Mono", monospace;
+    font-weight: bold;
+    font-style: normal;
+    color:rgba(90, 45, 152, 0.889);
+}
+#list{
+    padding: 4px;
+    margin: 6.5px;
+    font-family: "Exo 2", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+    color:rgba(5, 48, 178, 0.953);
+}
+#img-url{
+    justify-items: left;
+    margin: 5%;
+}
+img{
+    margin: 10px;
+    width: 35%;
+}
