@@ -4,7 +4,6 @@ p{
         font-weight: 400;
         font-style: normal;
         margin: 5px;
-      
 }
 button{
     padding: 20px;
@@ -15,4 +14,5 @@ img{
 #pi{
     display: grid;
     grid-template-columns: 1fr 1fr;
+    display: none;
 }
