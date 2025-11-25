@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the image >:)</title>
+    <style>
+        #hidingslug{
+            display: none;
+        }
+        img{
+            width: 25%;
+        }
+    </style>
+    <script>
+        showing="none"
+        function slugishere(){
+            if(showing=="none"){
+                document.getElementById("hidingslug").style.display="block"
+                showing="block"
+            }
+            else{
+                document.getElementById("hidingslug").style.display="none"
+                showing="none"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="everything">
+        <h1>All About <span onmouseover="slugishere()">Mushrooms</span></h1>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSqFDYPVNpNXjxAGn9EdUSHzDAMBecOwK03g&s" alt="Derpy Doomslug" id="hidingslug">
+        <div id="p">
+            A mushroom is the fleshy, spore-bearing fruiting body of a fungus, typically produced above ground on soil or another food source. A toadstool generally refers to a poisonous mushroom. The terms "mushroom" and "toadstool" go back centuries and were never precisely defined, nor was there consensus on application. During the 15th and 16th centuries, the terms mushrom, mushrum, muscheron, mousheroms, mussheron, or musserouns were used.<br><br>
+            
+            Identifying what is and is not a mushroom requires a basic understanding of their macroscopic structure. Most are basidiomycetes and gilled. Their spores, called basidiospores, are produced on the gills and fall in a fine rain of powder from under the caps as a result. At the microscopic level, the basidiospores are shot off basidia and then fall between the gills in the dead air space. As a result, for most mushrooms, if the cap is cut off and placed gill-side-down overnight, a powdery impression reflecting the shape of the gills (or pores, or spines, etc.) is formed (when the fruit body is sporulating). The color of the powdery print, called a spore print, is useful in both classifying and identifying mushrooms. Spore print colors include white (most common), brown, black, purple-brown, pink, yellow, and creamy, but almost never blue, green, or red.
+        </div>
+        <div id="list">
+            <dl>
+                <dt>Different types of mushrooms</dt>
+                <dd>Shiitake</dd>
+                <dd>Portobello</dd>
+                <dd>Penny Bun</dd>
+                <dd>Enoki</dd>
+                <dd>Button</dd>
+                <dd>Chanterelle</dd>
+                <dd>Oyster</dd>
+                <dd>Maitake</dd>
+                <dd>Cremini</dd>
+            </dl>
+        </div>
+        <div id="mushrooms">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sparrige_Sch%C3%BCppling_%28Pholiota_squarrosa%29.jpg/500px-Sparrige_Sch%C3%BCppling_%28Pholiota_squarrosa%29.jpg" alt="Mushrooms">
+        </div>
+    </div>
+</body>
+</html>
