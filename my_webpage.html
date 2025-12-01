@@ -6,6 +6,35 @@
         <link rel="stylesheet" href="my_webpage.css">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lavishly+Yours&family=Playwrite+CZ:wght@100..400&display=swap" rel="stylesheet">
+        <script>
+            showing="none"
+            images=[
+               "https://cdn.britannica.com/48/182648-050-6C20C6AB/LEGO-bricks.jpg?w=300",
+               "https://knowledge.wharton.upenn.edu/wp-content/uploads/2016/12/legos-900x387.jpg",
+               "https://cdn.prod.website-files.com/5b634e8c00b8860780707e26/5ca251d535643d2fab93ff8d_legos_5c7502061d1b4be2ad61ed1a0ccf9d06_1000.jpeg"
+            ]
+            index=0
+        function theyfoundit(){
+            if(showing=="none"){
+                document.getElementById("cutie").style.display="block"
+                document.getElementById("cute-p").style.display="block"
+                showing="block"
+                document.getElementById("sluger").innerHTML="Oh."
+            }else if(showing=="block"){
+                document.getElementById("cutie").style.display="none"
+                document.getElementById("cute-p").style.display="none"
+                showing="none"
+                document.getElementById("sluger").innerHTML="What's this?"
+            }
+        }
+        function dumbme(){
+            document.getElementById("legos").src=images[index]
+            index+=1
+            if(index>=images.length){
+               index=0
+            }
+        }
+        </script>
    </head>
    <body>
         <span id="title"><h1>Making Things Better</h1></span>
@@ -25,7 +54,7 @@
             One of the main things limiting me right now is the amount of legos I have. If I had more then I could keep going, adding more and more things to my laptop stand making it better and better. So far the best course of action is to keep adding more attachments until I can't anymore.
         </p></div>
         <div id="img-url">
-          <div id="img"><img src="https://brickitagain.org/cdn/shop/files/IMG_0095.jpg?v=1751311390&width=1946" alt="Pile of Legos image"></div><br>
+          <div id="img"><img id="legos" onmouseover="dumbme()" src="https://brickitagain.org/cdn/shop/files/IMG_0095.jpg?v=1751311390&width=1946" alt="Pile of Legos image"></div><br>
           <div id="url"><a href="https://en.wikipedia.org/wiki/Lego" target="_blank">For more information on Legos</a></div>
          </div>
          <div id="h2"><h2>Life Examples</h2></div>
@@ -33,5 +62,10 @@
           I actively strive to make myself better. I achieve this through watching other people and if they do something I don't agree with, I just work to not do what they did. This helps me become the best person I can be (in my eyes), and this makes me feel good about myself and my morals. Making myself better also allows me to be a better friend. Wanting to do better means I am a better friend in general because I adjust myself to just be better. Being a better friend means I don't lose my friends, like I did in my childhood.
           </p></div>
           <div id="img"><img src="https://ethical-leader.blog/wp-content/uploads/2020/03/friendship-2.jpg" width=25% alt="Friendship image"></div>
+          <div 1fr 1fr><button id="sluger" onclick="theyfoundit()">What's this?</button>
+          <img id="cutie" src="https://i0.wp.com/thecraftynerd.com/wp-content/uploads/2023/07/20230709_034323341_iOS.jpg?ssl=1" alt="Doomslug with glasses">
+         <div id="cute-p"><p>
+            Doomslug is a yellow slug with blue spikes along her backside. She does not appear to have eyes, a mouth, or any of the components of a face, but her behavior reminds Spensa of a chipmunk. When pleased, Doomslug emits a flutelike trill from her spikes. As a taynix, Doomslug has the ability to travel at faster-than-light speeds by accessing the nowhere and can distract the delvers from the cytonic hyperjump so that they won't be drawn into the universe. It is unclear whether or not Doomslug has or could learn any other cytonic powers. She also has the ability to shapeshift and disguise herself as other objects, as seen when she transforms into Spensa's father's flight pin. Doomslug can replicate any sound she hears with impeccable precision, though there is always a "distinctly fluty" sound to it. She is also capable of slightly modifying the sounds she mimics, as shown when she accidentally corrects Spensa's grammar by saying "By whom!" in response to the question "By who?" Doomslug is covered in blue spikes, which would make handling her difficult, and provides protection from predators. Her bright colors also lead Spensa to believe the possibility that she might be poisonous. The Superiority database says that the taynix are dangerously venomous. She is also capable of resisting minor increases in gravitational forces.
+         </p></div></div>
    </body>
 </html>

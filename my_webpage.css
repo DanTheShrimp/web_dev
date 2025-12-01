@@ -17,7 +17,7 @@ h1{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     color:rgba(13, 40, 93, 0.811);
 }
-#p{
+p{
     padding: 3px;
     margin: 3px;
     font-family: "Share Tech Mono", monospace;
@@ -41,4 +41,11 @@ h1{
 img{
     margin: 10px;
     width: 35%;
+    width: 20%;
+}
+#cutie{
+    display: none;
+}
+#cute-p{
+    display: none;
 }
