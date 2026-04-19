@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>DND DM Helper</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="dnd.css">
+    <!-- More readable medieval/display + handwritten fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+            /* Small helper styles for the DM helper UI */
+            body {
+                /* handwritten body font (more legible) */
+                font-family: 'Patrick Hand', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                color: #eee;
+                margin: 0;
+                padding: 1rem;
+                background: linear-gradient(180deg, rgba(105,27,27,0.95), rgba(35,10,10,0.95));
+                min-height: 100vh;
+            }
+
+            /* Medieval display for headings and creature titles (more readable) */
+            h1, .title strong { font-family: 'Cormorant Garamond', 'Patrick Hand', serif; letter-spacing: .02em; font-weight:600; }
+            h1 { font-size: 1.8rem; }
+
+            /* Use system font for small UI text for clarity */
+            .controls label, input, select, .meta { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
+            .meta { font-size: .9rem; }
+
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                margin-bottom: 1rem;
+                /* use the supplied stone photo tiled horizontally with no gap */
+                background-color: #6b645e; /* fallback color */
+                background-image: url('assets/header-stone.jpg');
+                background-repeat: repeat-x; /* tile horizontally */
+                /* make the image height match the band; adjust as needed to improve seam */
+                background-size: auto 64px;
+                padding: 0.75rem 1rem;
+                border-radius: 8px;
+            }
+
+            .controls {
+                display: flex;
+                gap: .5rem;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            /* number inputs (hp/damage) */
+            input[type="number"] {
+                padding: .45rem .5rem;
+                border-radius: 6px;
+                border: 1px solid rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.03);
+                color: #fff;
+                width: 84px;
+            }
+
+            input[type="text"], select {
+                padding: .5rem .6rem;
+                border-radius: 6px;
+                border: 1px solid rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.03);
+                color: #fff;
+                min-width: 160px;
+            }
+
+            /* Ensure the selected value is visible across platforms; style options separately */
+            select {
+                color: #fff;
+                background-color: rgba(255,255,255,0.03);
+                -webkit-appearance: menulist-button;
+                appearance: menulist-button;
+                text-indent: 0.01px; /* prevent some browsers from hiding text */
+                text-overflow: ellipsis;
+            }
+
+            /* Option styling is limited in some browsers, but setting a contrasting color helps when the list is open */
+            select option {
+                color: #000;
+                background-color: #fff;
+            }
+
+            button {
+                padding: .5rem .75rem;
+                border-radius: 6px;
+                border: none;
+                background: #2d8f2d;
+                color: white;
+                cursor: pointer;
+            }
+
+            button.secondary {
+                background: #444;
+            }
+
+            #creatures {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: .75rem;
+                margin-top: 1rem;
+            }
+
+            .creature {
+                padding: .75rem;
+                border-radius: 8px;
+                /* prefer a photorealistic parchment image if available, otherwise fall back to the SVG texture */
+                /* To use a photo texture, drop a file at: assets/parchment-photo.jpg (or .png) */
+                background-color: #f6ecd9;
+                background-image: url('assets/parchment-photo.jpg'), url('assets/parchment.svg');
+                background-size: cover, cover;
+                background-repeat: no-repeat, no-repeat;
+                color: #222; /* dark text on light card */
+                box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+                border: 1px solid rgba(0,0,0,0.06);
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* subtle light panel so UI elements remain readable over the texture */
+            .creature::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                /* lighten the overlay so the underlying parchment texture can show through */
+                background: rgba(255, 250, 238, 0.45); /* parchment pane (reduced opacity) */
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            /* ensure key children render above the overlay without forcing absolute/relative on all elements */
+            .creature .title,
+            .creature .meta,
+            .creature .stats,
+            .creature .card-controls,
+            .creature .remove { position: relative; z-index: 1; }
+            .creature .remove { z-index: 2; }
+
+            /* creature type styling: slightly smaller than title so it doesn't dominate */
+            .creature .meta {
+                font-size: 0.9rem;
+                font-weight: 600;
+                opacity: .95;
+                color: #2b2b2b;
+            }
+
+            .creature .stats {
+                margin-top: .5rem;
+                display: flex;
+                gap: .5rem;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .creature .hp { font-weight: 700; }
+
+            .title strong { color: #2b2b2b; font-size: 1.25rem; font-weight:700; }
+            .card-controls {
+                margin-top: .5rem;
+                display: flex;
+                gap: .4rem;
+                align-items: center;
+                flex-wrap: wrap; /* allow controls to wrap instead of overflowing */
+            }
+
+            .amount-input {
+                width: 48px; /* smaller so buttons fit better */
+                padding: .25rem .4rem;
+                border-radius: 6px;
+                border: 1px solid rgba(0,0,0,0.08);
+                background: #fff; /* clear input background */
+                color: #222;
+            }
+
+            /* on light creature cards, make the amount input dark text */
+            .creature .amount-input {
+                color: #222;
+                background: rgba(0,0,0,0.03);
+                border: 1px solid rgba(0,0,0,0.08);
+            }
+
+            .card-controls button { padding: .35rem .5rem; }
+            .card-controls .button-group { display:flex; gap:.4rem; flex: 0 0 auto; }
+            /* icon button sizing and colors */
+            .card-controls .button-group button {
+                width: 36px;
+                height: 36px;
+                padding: 0;
+                font-size: 18px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+            }
+            .card-controls .button-group .danger { background: #b63b3b; color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+            .card-controls .button-group .heal { background: #2d8f2d; color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+            .card-controls .button-group button:hover { transform: translateY(-1px); }
+
+            /* field label styling for top controls */
+            .controls .field { display: flex; flex-direction: column; gap: .15rem; align-items: flex-start; }
+            .controls label { font-size: .75rem; color: #ddd; min-height: 1rem; display: block; }
+
+            .creature.ally { border-left: 6px solid #2d8f2d; }
+            .creature.enemy { border-left: 6px solid #b63b3b; }
+
+            .creature.dead { opacity: .6; filter: grayscale(.6); }
+
+            /* header row: title left, remove button right */
+            .card-header { display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+            .card-header .title { margin:0; flex: 1 1 auto; min-width: 0; }
+            /* prevent the title from wrapping onto multiple lines and pushing the remove button above it */
+            .card-header .title strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .remove { position: static; background: rgba(0,0,0,0.06); border: none; color: #333; cursor: pointer; width:30px; height:30px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>DND DM Helper</h1>
+            <div class="controls">
+                <div class="field">
+                    <label aria-hidden="true"></label>
+                    <input id="creature-name" type="text" placeholder="Creature name (e.g. Goblin)">
+                </div>
+
+                <div class="field">
+                    <label aria-hidden="true"></label>
+                    <select id="creature-type">
+                        <option value="enemy">Enemy</option>
+                        <option value="ally">Ally</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="creature-hp">Starting HP</label>
+                    <input id="creature-hp" type="number" min="0" value="10" title="Starting HP">
+                </div>
+
+                <!-- damage input removed (use dice rolls instead); amount for apply damage kept per-card -->
+
+                <div class="field">
+                    <label aria-hidden="true"></label>
+                    <button id="add-creature">Add Creature</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section id="creatures" aria-live="polite">
+                <!-- creature cards will be inserted here -->
+            </section>
+        </main>
+
+        <script>
+            // Tiny DM helper: add new creature cards and mark ally/enemy
+            (function(){
+                const nameInput = document.getElementById('creature-name');
+                const typeSelect = document.getElementById('creature-type');
+                const addBtn = document.getElementById('add-creature');
+                const container = document.getElementById('creatures');
+
+                function createCreatureCard(name, type, hp) {
+                    const card = document.createElement('article');
+                    card.className = `creature ${type}`;
+
+                    // store hp and max
+                    let currentHP = Math.max(0, Number.isFinite(+hp) ? +hp : 0);
+                    const maxHP = currentHP;
+
+                    const title = document.createElement('div');
+                    title.className = 'title';
+                    title.innerHTML = `<strong>${escapeHtml(name)}</strong>`;
+
+                    const meta = document.createElement('div');
+                    meta.className = 'meta';
+                    const baseType = (type === 'ally') ? 'Ally' : 'Enemy';
+                    // helper to update the meta text to include (dead) when HP is 0
+                    function updateMeta() {
+                        meta.textContent = baseType + (currentHP === 0 ? ' (dead)' : '');
+                    }
+                    // set initial meta text
+                    updateMeta();
+
+                    const remove = document.createElement('button');
+                    remove.className = 'remove';
+                    remove.title = 'Remove creature';
+                    remove.setAttribute('aria-label','Remove creature');
+                    remove.innerHTML = '✖';
+                    remove.addEventListener('click', () => card.remove());
+
+                    // stats area
+                    const stats = document.createElement('div');
+                    stats.className = 'stats';
+
+                    const hpEl = document.createElement('div');
+                    hpEl.className = 'hp';
+                    hpEl.textContent = `HP: ${currentHP}`;
+
+                    stats.appendChild(hpEl);
+
+                    // controls: amount input + damage/heal buttons
+                    const controls = document.createElement('div');
+                    controls.className = 'card-controls';
+
+                    const amountInput = document.createElement('input');
+                    amountInput.type = 'number';
+                    amountInput.min = '0';
+                    amountInput.value = 1; // default amount for apply damage/heal
+                    amountInput.className = 'amount-input';
+
+                    const dmgBtn = document.createElement('button');
+                    dmgBtn.className = 'danger';
+                    dmgBtn.title = 'Apply damage';
+                    dmgBtn.setAttribute('aria-label','Apply damage');
+                    dmgBtn.textContent = '💔';
+
+                    const healBtn = document.createElement('button');
+                    healBtn.className = 'heal';
+                    healBtn.title = 'Heal creature';
+                    healBtn.setAttribute('aria-label','Heal creature');
+                    healBtn.textContent = '💚';
+
+                    // apply damage
+                    dmgBtn.addEventListener('click', () => {
+                        const amt = Math.max(0, Number(amountInput.value) || 0);
+                        currentHP = Math.max(0, currentHP - amt);
+                        hpEl.textContent = `HP: ${currentHP}`;
+                        if (currentHP === 0) card.classList.add('dead');
+                        updateMeta();
+                    });
+
+                    // heal (up to maxHP)
+                    healBtn.addEventListener('click', () => {
+                        const amt = Math.max(0, Number(amountInput.value) || 0);
+                        currentHP = Math.min(maxHP, currentHP + amt);
+                        hpEl.textContent = `HP: ${currentHP}`;
+                        if (currentHP > 0) card.classList.remove('dead');
+                        updateMeta();
+                    });
+
+                    // keep action buttons together so they don't wrap separately
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.className = 'button-group';
+                    buttonGroup.appendChild(dmgBtn);
+                    buttonGroup.appendChild(healBtn);
+
+                    controls.appendChild(amountInput);
+                    controls.appendChild(buttonGroup);
+
+                    // put title and remove button on the same row
+                    const headerRow = document.createElement('div');
+                    headerRow.className = 'card-header';
+                    headerRow.appendChild(title);
+                    headerRow.appendChild(remove);
+                    card.appendChild(headerRow);
+                    card.appendChild(meta);
+                    card.appendChild(stats);
+                    card.appendChild(controls);
+
+                    return card;
+                }
+
+                function escapeHtml(unsafe) {
+                    return String(unsafe)
+                      .replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+                }
+
+                const hpInput = document.getElementById('creature-hp');
+
+                addBtn.addEventListener('click', () => {
+                    const rawName = nameInput.value.trim();
+                    const name = rawName || (typeSelect.value === 'ally' ? 'Friendly' : 'Foe');
+                    const type = typeSelect.value === 'ally' ? 'ally' : 'enemy';
+                    const hp = Math.max(0, Number(hpInput.value) || 0);
+
+                    const card = createCreatureCard(name, type, hp);
+                    container.appendChild(card);
+
+                    // clear name but keep focus for fast entry
+                    nameInput.value = '';
+                    nameInput.focus();
+                });
+
+                // allow Enter key on the name input to add creature
+                nameInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
+                });
+
+            })();
+        </script>
+    </body>
+</html>
